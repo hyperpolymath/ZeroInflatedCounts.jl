@@ -54,7 +54,7 @@ jobs:
       - uses: julia-actions/setup-julia@v3.0.2
         with:
           version: "1"
-      - uses: julia-actions/cache@v2
+      - uses: julia-actions/cache@v3
       - name: JET analysis (supported API)
         # JET's path/string entry points were REMOVED in v0.12.0, having been
         # deprecated since v0.11: `report_package(::AbstractString)`,
@@ -107,6 +107,6 @@ jobs:
       - uses: julia-actions/setup-julia@v3.0.2
         with:
           version: ${{ matrix.julia }}
-      - uses: julia-actions/cache@v2
+      - uses: julia-actions/cache@v3
       - name: Pkg.test()
         run: julia --project=. -e 'using Pkg; Pkg.test()'
