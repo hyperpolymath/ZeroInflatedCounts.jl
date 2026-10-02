@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: MPL-2.0
+# ECOSYSTEM.a2ml — where ZeroInflatedCounts.jl sits in the estate.
+
+[metadata]
+project = "ZeroInflatedCounts.jl"
+ecosystem = "hyperpolymath"
+
+[position]
+type = "julia-library"
+purpose = "Hurdle and zero-inflated negative binomial models for sequencing count data: R pscl in production, a Julia likelihood oracle in tests, and Agda proofs of the model identities."
+# IS-NOT — anti-identity (the boundary-erosion guard)
+what-this-is-not = [
+  "an implementation yet (only the method-conditions specification exists; see docs/method-conditions/)",
+  "a replacement for MetaManifold-WebUI's NB GLM differential abundance (that stays the method of record; these are alternative fits shown beside it)",
+  "an occupancy model (single-visit occupancy is not identifiable; a replicate-only design is planned separately)",
+  "a Julia reimplementation of pscl for production use (the Julia likelihood is a test oracle only)",
+]
+
+[pipeline]
+position = "library"
+chain = "ZeroInflatedCounts.jl → MetaManifold-WebUI (thin adapter: route, panel, analysis: keys, dependency pinned by commit)"
+notes = "Delivered as an independent package for MetaManifold-WebUI#18; the consumer repo receives only an adapter."
+coordination = "MetaManifold-WebUI"
+
+[related-projects]
+projects = [
+  { name = "MetaManifold-WebUI", relationship = "consumer", notes = "JoshuaJewell/MetaManifold-WebUI (upstream). Issues #18 (these methods) and #102 (the NB GLM they extend) are on the hyperpolymath fork, where the NB GLM is merged via PR #103." },
+]

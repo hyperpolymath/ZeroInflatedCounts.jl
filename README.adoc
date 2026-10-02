@@ -1,0 +1,91 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+// SPDX-FileCopyrightText: 2024-2026 Jonathan D.A. Jewell (hyperpolymath)
+= ZeroInflatedCounts.jl
+:toc:
+:toc-placement: preamble
+
+// ── Licensing ───────────────────────────────────────────────────────────────
+image:https://img.shields.io/badge/Code-MPL--2.0-blue.svg?logo=mozilla[Code licence: MPL-2.0,link="https://opensource.org/licenses/MPL-2.0"]
+image:https://img.shields.io/badge/Docs-CC--BY--SA--4.0-blue.svg?logo=creativecommons[Docs licence: CC-BY-SA-4.0,link="https://creativecommons.org/licenses/by-sa/4.0/"]
+image:https://img.shields.io/badge/Provenance-Quantum--Safe-blueviolet[Quantum-Safe Provenance,link="docs/legal/EXHIBIT-B-QUANTUM-SAFE.txt"]
+
+// ── Standard & quality gates ────────────────────────────────────────────────
+image:https://img.shields.io/badge/RSR-Rhodium_Standard-9C27B0[Rhodium Standard Repository,link="https://github.com/hyperpolymath/rhodium-standard-repositories"]
+image:https://api.scorecard.dev/projects/github.com/hyperpolymath/ZeroInflatedCounts.jl/badge[OpenSSF Scorecard,link="https://scorecard.dev/viewer/?uri=github.com/hyperpolymath/ZeroInflatedCounts.jl"]
+image:https://sonarcloud.io/api/project_badges/measure?project=hyperpolymath_ZeroInflatedCounts.jl&metric=alert_status[SonarQube Quality Gate,link="https://sonarcloud.io/summary/new_code?id=hyperpolymath_ZeroInflatedCounts.jl"]
+image:https://archive.softwareheritage.org/badge/origin/https://github.com/hyperpolymath/ZeroInflatedCounts.jl/[Archived in Software Heritage,link="https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/hyperpolymath/ZeroInflatedCounts.jl"]
+
+Hurdle and zero-inflated negative binomial models for sequencing count data.
+
+[IMPORTANT]
+====
+*Status: not implemented.* This repository holds the specification the
+models will be built against, and nothing else yet. The package loads, but
+it exports no functions.
+====
+
+== What this is for
+
+Amplicon count tables contain many zeros. A hurdle or zero-inflated model
+gives those zeros their own sub-model. This package will provide two such
+models for one taxon at a time:
+
+* `hurdle_nb`: a binomial model for whether any reads were seen, and a
+  zero-truncated negative binomial for how many, given that some were;
+* `zinb`: a negative binomial mixed with a point mass at zero.
+
+They are intended as *alternative fits shown beside* a plain negative binomial
+GLM, so that a user can see whether a conclusion depends on how zeros are
+modelled. They are not a replacement for it, and no model is chosen
+automatically.
+
+The first consumer is
+https://github.com/JoshuaJewell/MetaManifold-WebUI[MetaManifold-WebUI], where
+these methods were proposed in
+https://github.com/hyperpolymath/MetaManifold-WebUI/issues/18[issue #18]. That
+repository will receive only a thin adapter (a route, a panel, configuration
+keys, and a dependency pinned by commit). The models, tests and proofs live
+here.
+
+== The specification
+
+link:docs/method-conditions/zero-inflation-and-hurdle.adoc[docs/method-conditions/zero-inflation-and-hurdle.adoc]
+sets out, before any code exists:
+
+* the model formulas, and how sequencing depth enters each part;
+* the data accepted, and the minimum sizes below which a fit is refused;
+* the single per-taxon test and the multiple-testing rule;
+* why the Vuong test is not offered, and what replaces it;
+* every unsuccessful state and how it is reported;
+* the evidence required before the methods count as implemented;
+* what is explicitly not claimed.
+
+== Planned design
+
+* *Production fits* call R's `pscl` package through RCall.
+* *A pure-Julia log-likelihood* for each model exists only in the test suite,
+  as an independent oracle to check the R results against.
+* *Agda proofs* (`--safe --without-K`) of three model identities: the hurdle
+  likelihood separates into its two parts; the truncation normaliser is
+  positive; the ZINB zero probability lies in [0, 1]. Whether an estimator
+  recovers the truth is a tested claim, never a proved one.
+
+Occupancy models, also proposed in issue #18, are out of scope here. With one
+sample per unit they are not identifiable without an untestable assumption.
+
+== Testing
+
+[source,bash]
+----
+julia --project=. -e 'using Pkg; Pkg.test()'
+----
+
+At present this runs `Aqua.test_all` (11 checks) and one placeholder
+behaviour test. No model is tested yet, because none exists.
+
+== Licence
+
+Code, configuration and scripts are link:LICENSE[Mozilla Public License 2.0]
+(`MPL-2.0`); prose documentation is `CC-BY-SA-4.0`. Both texts live in
+`LICENSES/`, and per-file `SPDX-License-Identifier` headers are authoritative.

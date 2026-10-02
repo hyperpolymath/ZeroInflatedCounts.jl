@@ -1,0 +1,279 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+= Method conditions: hurdle and zero-inflated negative binomial models
+:toc:
+:toclevels: 2
+
+*Status: not implemented.* This is the specification this package is built against. It is
+published before any model code, so the code can be checked against it. It sets out what each
+method computes, what it refuses, and what it does not claim.
+
+Two methods are covered: `hurdle_nb` and `zinb`. They were proposed in
+https://github.com/hyperpolymath/MetaManifold-WebUI/issues/18[MetaManifold-WebUI#18].
+
+*The consumer* is https://github.com/JoshuaJewell/MetaManifold-WebUI[MetaManifold-WebUI]. A
+negative-binomial GLM for differential abundance, requested in
+https://github.com/hyperpolymath/MetaManifold-WebUI/issues/102[hyperpolymath/MetaManifold-WebUI#102],
+is merged on the `hyperpolymath/MetaManifold-WebUI` fork (PR #103) and not yet upstream:
+`Differential.fit_nb` and `Differential.differential_abundance` in
+`src/analysis/differential.jl`. This document calls that method *the NB GLM*.
+
+- The data contract, offsets and multiple-testing rule of the NB GLM carry over unchanged.
+- MetaManifold-WebUI receives only a thin adapter: a route, a panel, configuration keys and a
+  dependency pinned by commit. The models, tests and proofs live here.
+
+*Approval.* The method catalogue v1 (`hyperpolymath/MetaManifold-WebUI`, branch
+`archive/main-2026-09-29`, `docs/statistics/method-catalogue-v1.md`, line 78) approves no Poisson or negative-binomial model for sequencing data.
+These methods, and the NB GLM they extend, therefore count as approved only once the owner
+amends the catalogue. Until then this document specifies; it does not authorise.
+
+== Why these models, and why not as a default
+
+Amplicon count tables contain many zeros. A hurdle or zero-inflated model gives those zeros
+their own sub-model. That is a modelling choice, not a correction.
+
+Silverman, Roche, Mukherjee & David (2020) describe four processes that produce zeros in
+sequence count data. In their simulations:
+
+- simple count models were adequate across all four, even when the true process was unknown;
+- zero inflation was suitable only for one zero-generating process, tied to an unlikely set of
+  biological and experimental conditions.
+
+Therefore:
+
+* The NB GLM stays the method of record for differential abundance.
+* `hurdle_nb` and `zinb` are *alternative fits shown beside it*. Their purpose is to let a user
+  see whether a conclusion depends on how zeros are modelled.
+* Neither replaces the NB GLM automatically. No model is chosen by a goodness-of-fit statistic,
+  and none by which p-value is smaller.
+
+== What these methods are
+
+[cols="1,2,2,3",options="header"]
+|===
+|Method |Zero part |Count part |Fitted with
+
+|`hurdle_nb`
+|binomial GLM, logit link: P(count > 0)
+|zero-truncated negative binomial, log link
+|R `pscl::hurdle(dist = "negbin", zero.dist = "binomial")`
+
+|`zinb`
+|binomial GLM, logit link: P(structural zero)
+|negative binomial, log link, mixed with the zero part
+|R `pscl::zeroinfl(dist = "negbin")`
+|===
+
+For one taxon, let `g` be the group indicator and `s` the size factor, computed by `tss` or
+`rle` exactly as for the NB GLM. Both methods use the same formula:
+
+----
+hurdle_nb:  count ~ g + offset(log s)  |  g + log s
+zinb:       count ~ g + offset(log s)  |  g + log s
+----
+
+*Why the size factor enters the two parts differently.*
+
+* In the count part, `log s` is an *offset* on the log scale, as in the NB GLM.
+* In the zero part, `log s` is a *covariate*:
+** an offset has no meaning on the logit scale;
+** sequencing depth is the main driver of zeros that come from sampling. Leaving depth out of
+   the zero part would report a difference in depth between groups as a "presence" effect.
+
+*What each zero part means.*
+
+* `hurdle_nb`: the zero part models whether *any* reads were observed. The count part models
+  abundance *given* that the taxon was observed. Both parts have a direct reading.
+* `zinb`: the zero part is a mixture weight for "structural" zeros. With one sample per unit,
+  that weight is separated from the negative binomial's own zeros *only by the shape of the
+  negative binomial distribution*. It is never reported as the probability that a taxon is
+  absent (see <<not-claimed>>).
+
+== Data accepted
+
+* *Counts.* The same contract as the NB GLM: non-negative integer read counts, samples × taxa,
+  with no pseudocounts. Anything else is refused, not rounded.
+* *Groups.* Two: a reference and a contrast, as for the NB GLM.
+* *Configuration.* The consumer's existing keys `analysis.differential.offset` and
+  `analysis.differential.min_prevalence` apply unchanged. The adapter is proposed to add one key,
+  `analysis.differential.method`, taking `nb_glm` (the default), `hurdle_nb` or `zinb`.
+* *Minimum size.* These are the floors at which a fit is *computable*. They are far below what
+  makes inference *adequate*, so any run under 20 samples is flagged in the results table.
++
+[cols="1,3",options="header"]
+|===
+|Method |Floor
+
+|`zinb`
+|Fitted jointly, with 6 parameters: intercept and `g` in the count part, θ, and intercept, `g`
+and `log s` in the zero part. A run with 6 or fewer samples is refused.
+
+|`hurdle_nb`
+|Fitted as two separate models.
+
+* Zero part: 3 parameters, fitted on all samples. It needs at least 4 samples.
+* Count part: 3 parameters (intercept, `g`, θ), fitted only on the positive counts. A taxon
+  needs at least 3 positive counts in each group, so 6 or more in total. Below that it is
+  refused, with the counts named.
+|===
+
+== The test reported per taxon, and multiple testing
+
+* *One p-value per taxon.* It comes from a likelihood ratio test of the group effect in both
+  parts together, with 2 degrees of freedom:
+** the full model is compared with the same model with `g` dropped from both parts;
+** the null value of each group coefficient lies inside its parameter space, so the reference
+   distribution is the standard χ² with 2 degrees of freedom.
+* *Benjamini–Hochberg* is applied across the taxa that produced this p-value. Taxa that were
+  refused or failed are excluded from the family, as for the NB GLM.
+* *Per-part estimates are descriptive, with no p-values of their own.* These are the count-part
+  log fold change and the zero-part log odds ratio, each with its Wald SE. Giving each a p-value
+  would add two more testing families from the same data.
+
+== Comparing against the NB GLM: what replaces the Vuong test
+
+MetaManifold-WebUI#18 asked for a Vuong test of ZINB against NB. *It is not offered*, because
+the test is invalid here:
+
+* NB is ZINB with the zero weight at its boundary (π = 0).
+* So the two models are neither strictly non-nested nor overlapping in Vuong's sense.
+* Wilson (2015) shows that the Vuong test is invalid when used this way.
+
+What is offered instead:
+
+* *Intercept-only zero part.* A likelihood ratio test referred to a 50:50 mixture of χ²₀ and χ²₁
+  (Self & Liang, 1987) is valid here. It can be added as a per-taxon diagnostic in this
+  restricted form only.
+* *Zero part with covariates (the default model above).* No test is offered. "No zero
+  inflation" is then not a single boundary point: it is the logit going to −∞. This is a
+  stated limit, not a gap.
+* *Hurdle against NB.* No comparison test is offered.
+
+Whatever is reported is descriptive. It never switches the method of record.
+
+== Unsuccessful states
+
+Each state is reported per taxon, with its reason. A failed taxon never receives a stand-in
+p-value.
+
+[cols="2,1,2",options="header"]
+|===
+|State |Detected by |Outcome
+
+|A group has no zeros, or only zeros, for this taxon
+|counts, before fitting
+|Refused: "the zero part is separated in group X".
+
+|Hurdle count part: fewer than 3 positive counts in a group
+|counts, before fitting
+|Refused, with the counts named.
+
+|Non-convergence, or a covariance matrix that is not positive definite (any SE missing or not finite)
+|the `pscl` result
+|Failed, with R's message.
+
+|θ at the NB GLM's bounds (≥ 1e7 or ≤ 1e-8)
+|fitted θ
+|Kept, with the same note the NB GLM gives.
+
+|`zinb` zero part collapsed: the fitted zero weight is below 1e-6 in every sample
+|fitted probabilities
+|Test refused for that taxon: "no zero inflation is detectable; the NB GLM result applies".
+
+|`pscl` not installed
+|the R runtime
+|The whole method is unavailable, with the package named.
+|===
+
+== Provenance written for every run
+
+* The method name.
+* The model formulas, exactly as passed to R.
+* The offset method.
+* The versions of R, `pscl` and `MASS`.
+* How many taxa were tested, refused and failed.
+* Any warnings R raised during each fit.
+
+== Dependencies
+
+* *R.* `pscl`, called through RCall. In the consumer's `renv.lock` this adds one package: its
+  dependency `MASS` is already locked there, and the rest is base R.
+** `glmmTMB` was rejected on dependency size: it brings 72 additional packages.
+** `unmarked` was rejected for the same reason: it brings 18.
+* *Julia.* Production code uses no Julia likelihood. A pure-Julia log-likelihood for each model
+  exists only in the test suite, as an independent oracle.
+
+== Evidence planned before the methods count as implemented
+
+None of this exists yet. In order:
+
+. *Known answers.*
+** Data simulated from each model with planted coefficients.
+** The planted values must fall inside the reported intervals at the stated rate across repeats.
+. *Independent reference.*
+** The same data fitted directly with `pscl` in R, and evaluated with the Julia oracle
+   likelihood.
+** Compared: coefficients, SEs, log-likelihood and the LRT statistic.
+** Tolerances are recorded in the test.
+. *Negative controls.*
+** Every refusal in the table above.
+** A null simulation, in which the BH-adjusted false discovery rate is reported.
+. *Proofs* (Agda, `--safe --without-K`). Each is labelled _proved_ only for exactly these
+  statements:
+** The hurdle log-likelihood separates into a zero part and a count part. Hence the joint MLE
+   equals the two separately fitted MLEs.
+** The truncated-NB normaliser 1 − f~NB~(0; μ, θ) is positive for μ > 0.
+** The ZINB zero probability π + (1 − π)·f~NB~(0) lies in [0, 1].
+
+Whether any estimator recovers the truth is a _tested_ claim, never a proved one.
+
+== Occupancy is out of scope here
+
+MetaManifold-WebUI#18 also asks for occupancy models, with ψ for presence and p for detection.
+With one sample per unit, only the product ψ·p is observable:
+
+* Single-visit occupancy (Lele, Moreno & Bayne, 2012) separates ψ and p only through the
+  functional form of the link.
+* Knape & Korner-Nievergelt (2015) show that this rests on the link assumption, not on the data.
+  Estimates are sensitive to the choice of link.
+
+Occupancy will therefore be offered only for designs with *technical or PCR replicates*, at
+least two per sample:
+
+* there, the replicates themselves identify ψ and p. With K = 2 replicates, let
+  a = P(detected twice) = ψp² and b = P(detected once) = 2ψp(1 − p). Then p = 2a/(2a + b) and
+  ψ = a/p²;
+* occupancy will get its own conditions document;
+* the bundled MiSeq_SOP data has no replicates.
+
+`hurdle_lognormal`, also proposed in #18, is dropped. It has no count model, and `pscl` does
+not implement it.
+
+[[not-claimed]]
+== Explicitly not claimed
+
+* Neither method is endorsed for sequencing data, and neither is preferred to the NB GLM.
+* The `zinb` zero weight is *not* the probability that a taxon is absent from a sample. It is
+  identified only through the shape of the negative binomial.
+* Wald intervals and χ² reference distributions are asymptotic. Per-taxon fits on tens of
+  samples are where they are weakest.
+* Neither this document nor the NB GLM has had an independent statistical review.
+
+== References
+
+* Knape, J. & Korner-Nievergelt, F. (2015). Estimates from non-replicated population surveys
+  rely on critical assumptions. _Methods in Ecology and Evolution_ 6(3), 298–306.
+  doi:10.1111/2041-210X.12329.
+* Lele, S. R., Moreno, M. & Bayne, E. (2012). Dealing with detection error in site occupancy
+  surveys: what can we do with a single survey? _Journal of Plant Ecology_ 5(1), 22–31.
+  doi:10.1093/jpe/rtr042.
+* Self, S. G. & Liang, K.-Y. (1987). Asymptotic properties of maximum likelihood estimators
+  and likelihood ratio tests under nonstandard conditions. _Journal of the American Statistical
+  Association_ 82, 605–610.
+* Silverman, J. D., Roche, K., Mukherjee, S. & David, L. A. (2020). Naught all zeros in
+  sequence count data are the same. _Computational and Structural Biotechnology Journal_ 18,
+  2789–2798. doi:10.1016/j.csbj.2020.09.014.
+* Wilson, P. (2015). The misuse of the Vuong test for non-nested models to test for
+  zero-inflation. _Economics Letters_ 127, 51–53.
+* Zeileis, A., Kleiber, C. & Jackman, S. (2008). Regression models for count data in R.
+  _Journal of Statistical Software_ 27(8).
