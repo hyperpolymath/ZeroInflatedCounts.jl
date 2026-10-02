@@ -16,7 +16,7 @@ The template's own code is the ABI/FFI seam that every minted repo inherits:
   `test/integration_test.zig`), exporting C symbols named `<project>_*`.
 * `src/interface/generated/`: C headers generated from the ABI.
 
-Everything else is scaffolding: `.machine_readable/` (descriptiles, contractiles,
+Everything else is scaffolding: `.machine_readable/` (descriptiles, self-validating,
 policies), `build/just/*.just` (the task phases the root `Justfile` imports), and
 `.github/workflows/` (the CI a minted repo starts with).
 
@@ -46,7 +46,6 @@ Template-specific commands:
 
 [source,bash]
 ----
-just repo-init    # instantiate: fills every placeholder token, then validates
 just validate     # RSR shape + metadata + AI-install completeness
 just quality      # fmt-check, lint, test
 just test-all     # test, e2e, aspect, bench, readiness
@@ -55,14 +54,14 @@ just repo-map     # regenerate docs/architecture/REPOSITORY-MAP.adoc (CI checks 
 
 The golden path is `just test && just quality`. In the template itself `test` and
 `lint` fail on the placeholder tokens in `src/interface/ffi/src/main.zig`; that is
-deliberate. Test a change to the FFI in a scratch copy after `repo-init`.
+deliberate. Test a change to the FFI in a scratch copy.
 
 == Where things are
 
 * Top level: `archetypes/ benches/ build/ ci/ docs/ examples/ features/ LICENSES/
   scripts/ session/ src/ tests/ verification/ www/`. The root file list is fenced by
   `.machine_readable/root-allow.txt`; a new root file needs a line there.
-* `build/just/`: provisioning (`provision.just`, `provision-lib.sh`), `repo-init.just`,
+* `build/just/`: provisioning (`provision.just`, `provision-lib.sh`),
   `validate.just`, and the other imported phases.
 * `build/guix.scm`, `build/manifest.scm`, `build/channels.scm`: the Guix route.
 * `tests/`: e2e, aspect, shape and workflow checks. `benches/`: benchmark harness.
@@ -76,11 +75,7 @@ deliberate. Test a change to the FFI in a scratch copy after `repo-init`.
   `CC-BY-SA-4.0` for prose docs. Never change an existing file's licence.
 * Commits are signed; history is linear (squash merges).
 
-* `.machine_readable/contractiles/Justfile` must stay byte-identical to the root
-  `Justfile`; copy it after every edit.
-* Never put literal placeholder tokens in prose that `repo-init` will process: it
-  substitutes them. Write "placeholder token" instead.
 * `build/` is not an artefact directory here: `just clean` deliberately leaves it,
-  because `build/just/repo-init.just` lives there.
-* Descriptile and policy files are A2ML, which is retired: do not extend them or
-  build anything new on them.
+  because the `build/just/` recipe modules live there.
+* Repository metadata lives in the repo deed, `ZeroInflatedCounts.jl_chora.deed`
+  (DEED grammar); k9 validation contracts live in `.machine_readable/self-validating/`.

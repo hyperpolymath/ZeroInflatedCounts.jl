@@ -14,10 +14,6 @@ set shell := ["bash", "-uc"]
 set dotenv-load := true
 set positional-arguments := true
 
-# Import auto-generated contractile recipes (must-check, trust-verify, etc.)
-# Re-generate with: contractile gen-just
-import? "build/contractile.just"
-
 # Provisioning canon: setup, doctor, heal, dev-shell, eval, ai-setup, … (see PROVISIONING below)
 mod provision 'build/just/provision.just'
 
@@ -55,28 +51,16 @@ info:
     @echo "Version: {{version}}"
     @echo "RSR Tier: {{tier}}"
     @echo "Recipes: $(just --summary | wc -w)"
-    @[ -f ".machine_readable/descriptiles/STATE.a2ml" ] && grep -oP 'phase\s*=\s*"\K[^"]+' .machine_readable/descriptiles/STATE.a2ml | head -1 | xargs -I{} echo "Phase: {}" || true
+    @grep -oE "^ *:phase [^ )]+" *_chora.deed | head -1 | sed "s/^ *:phase /Phase: /"
 
 # Run Invariant Path overlay tools for this repository
 invariant-path *ARGS:
     ./scripts/invariant-path.sh {{ARGS}}
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# INIT — see build/just/repo-init.just
-# ═══════════════════════════════════════════════════════════════════════════════
-
-import? "build/just/repo-init.just"
-
 # >>> container-module (three-tier: OCI · portable engine · stapeln) >>>
 # Self-contained. Remove the entire block — this and the import — with `just no-container`.
 import? "build/just/container.just"
 # <<< container-module <<<
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# GROOVE PROTOCOL — see build/just/groove.just
-# ═══════════════════════════════════════════════════════════════════════════════
-
-import? "build/just/groove.just"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # PROJECT SELF-ASSESSMENT + OPENSSF COMPLIANCE — see build/just/assess.just
@@ -117,9 +101,9 @@ clean:
     # TODO: Customize for your build system
     #
     # `build/` is DELIBERATELY ABSENT from this list. It is not an artifact
-    # directory in an RSR repo: it holds 11 tracked files, including
-    # build/just/repo-init.just, which the root Justfile imports at line 65.
-    # Deleting it destroys `just repo-init`, `just verify` and the proof gates.
+    # directory in an RSR repo: it holds tracked sources, including
+    # build/just/*.just, which the root Justfile imports.
+    # Deleting it destroys `just verify` and the proof gates.
     rm -rf target/ _build/ dist/ out/ obj/ bin/
 
 # Deep clean including caches [reversible: rebuild]
@@ -132,7 +116,7 @@ clean-all: clean
 
 # Run every detected language's tests: `zig build test` covers src/interface/ffi
 # (unit tests in src/main.zig, test/integration_test.zig). It compiles only after
-# `just repo-init` has filled the template tokens, so an un-initialised template
+# the template tokens are filled at minting, so an un-initialised template
 # fails here loudly instead of reporting a pass over nothing.
 test: provision::test
 
@@ -213,7 +197,7 @@ fmt: provision::fmt
 fmt-check: provision::fmt-check
 
 # Run linter (`zig fmt --check` on src/interface/ffi; like `test`, it parses the
-# FFI sources only after `just repo-init` has filled the template tokens)
+# FFI sources only after the template tokens are filled at minting)
 lint: provision::lint
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -257,12 +241,8 @@ deps-audit:
     @echo "Audit complete"
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# ARRIVAL PACK — agent-facing CLAUDE.md, compiled from a2ml
+# REPOSITORY MAP
 # ═══════════════════════════════════════════════════════════════════════════════
-
-# Compile CLAUDE.md (the agent arrival pack) from this repo's a2ml
-claude-md:
-    @bash .machine_readable/arrival-pack/generate.sh
 
 # Regenerate the single authoritative repository map
 repo-map:
@@ -283,26 +263,6 @@ validate-repo-map:
     fi
     rm -f "$before"
     echo "repository map: up to date"
-
-# Fail if CLAUDE.md's generated region drifted from a2ml or was hand-edited
-validate-claude-md:
-    @bash .machine_readable/arrival-pack/verify.sh
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# COAPTATION — typed descriptile↔contractile face-off (homeostasis reading)
-# ═══════════════════════════════════════════════════════════════════════════════
-
-# Emit the coaptation receipt: how the descriptiles coapt with the contractiles (SITREP)
-coapt:
-    @bash .machine_readable/coaptation/coapt.sh --report
-
-# Assemble a re-anchor basis IF the band is red (the drop itself is a human act)
-coapt-reanchor:
-    @bash .machine_readable/coaptation/coapt.sh --reanchor
-
-# Fail if the committed coaptation receipt drifted from the contractiles/descriptiles
-validate-coapt:
-    @bash .machine_readable/coaptation/verify.sh
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DOCUMENTATION
@@ -407,16 +367,10 @@ import? "build/just/validate.just"
 # STATE MANAGEMENT
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Update STATE.a2ml timestamp
-state-touch:
-    @if [ -f ".machine_readable/descriptiles/STATE.a2ml" ]; then \
-        sed -i 's/last-updated = "[^"]*"/last-updated = "'"$(date +%Y-%m-%d)"'"/' .machine_readable/descriptiles/STATE.a2ml && \
-        echo "STATE.a2ml timestamp updated"; \
-    fi
-
-# Show current phase from STATE.a2ml
+# Show the lifecycle phase (status clause) and maturity (maturity clause) from the repo deed
 state-phase:
-    @sed -n 's/^[[:space:]]*phase[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' .machine_readable/descriptiles/STATE.a2ml 2>/dev/null | head -1 || echo "unknown"
+    @grep -m1 -oE "^ *:phase [^ )]+" *_chora.deed | sed "s/^ *://"
+    @grep -A1 -E "^ *\(maturity$" *_chora.deed | grep -oE ":level [^ )]+" | sed "s/^:level/maturity/"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # GUIX
@@ -438,7 +392,7 @@ guix-build:
 automate task="all":
     #!/usr/bin/env bash
     case "{{task}}" in
-        all) just fmt && just lint && just test && just docs && just state-touch ;;
+        all) just fmt && just lint && just test && just docs ;;
         cleanup) just clean && find . -name "*.orig" -delete && find . -name "*~" -delete ;;
         update) just deps && just validate ;;
         *) echo "Unknown: {{task}}. Use: all, cleanup, update" && exit 1 ;;

@@ -19,9 +19,9 @@ link:architecture/REPOSITORY-MAP.adoc[architecture/REPOSITORY-MAP.adoc].
 
 This document is kept for its longer-form rationale, not as a second README.
 Its hand-written directory tree was removed in 2026-08 after being found stale
-in six places at once (a2ml files listed outside `descriptiles/`, `Trustfile.hs`
-for `Trustfile.a2ml`, `docs/CITATIONS.adoc` and `docs/TOPOLOGY-GUIDE.adoc` which
-do not exist, and `src/interface/Abi/` which was renamed to lowercase).
+in several places at once (files listed outside their directory, `docs/CITATIONS.adoc`
+and `docs/TOPOLOGY-GUIDE.adoc` which do not exist, and `src/interface/Abi/` which
+was renamed to lowercase).
 ====
 
 == Overview
@@ -32,7 +32,7 @@ This repository provides the standardized structure, configuration, and tooling 
 
 * Bootstrap new projects with RSR compliance
 * Reference the standard directory structure
-* Copy configuration templates (Justfile, STATE.a2ml, etc.)
+* Copy configuration templates (Justfile, repo deed, etc.)
 
 == Quick Start
 
@@ -45,9 +45,6 @@ cd my-project
 # Remove template git history
 rm -rf .git
 git init
-
-# Interactive bootstrap — replaces all placeholders
-just repo-init
 
 # Enter development environment
 guix shell -D -f build/guix.scm
@@ -78,7 +75,7 @@ just validate-rsr
 |Site-operations bundle; RFC-compliant metadata at `www/.well-known/` (security.txt, ai.txt, humans.txt)
 
 |`.machine_readable/`
-|All machine-readable content: state files (6 a2ml), `bot_directives/`, `contractiles/`
+|All machine-readable content: `descriptiles/`, `self-validating/` (k9), `policies/`
 
 |`docs/`
 |Documentation directory
@@ -113,7 +110,7 @@ just validate-rsr
 |`*_chora.deed` (repo deed)
 |Universal AI agent entry point
 
-|`AI.a2ml`
+|`CLAUDE.md`
 |Claude-specific instructions
 
 |`src/interface/Abi/`
@@ -134,7 +131,7 @@ The template Justfile provides:
 * **Cookbook generation**: `just cookbook` -> `docs/just-cookbook.adoc`
 * **Man page generation**: `just man` -> `docs/man/project.1`
 * **RSR validation**: `just validate-rsr`
-* **STATE.a2ml management**: `just state-touch`, `just state-phase`
+* **Repo deed state**: `just state-phase`, `just validate-state`
 * **Container support**: `just container-build`, `just container-push`
 * **CI matrix**: `just ci-matrix [stage] [depth]`
 
@@ -183,7 +180,7 @@ hand-written tree that used to sit here it cannot go stale.
 * `Justfile`
 * `README.adoc`
 * `LICENSE` (MPL-2.0)
-* `.machine_readable/descriptiles/STATE.a2ml`
+* `ZeroInflatedCounts.jl_chora.deed` (repo deed)
 * `www/.well-known/security.txt`
 * `www/.well-known/ai.txt`
 * `www/.well-known/humans.txt`
@@ -198,37 +195,23 @@ hand-written tree that used to sit here it cannot go stale.
 * npm, Bun, pnpm, yarn (use )
 * Go (use Rust)
 
-== STATE.a2ml
+== Project State
 
-The STATE.a2ml file tracks project state:
+The `status` clause of the repo deed, `ZeroInflatedCounts.jl_chora.deed`,
+tracks project state: `:phase` and a dated `history`; its `maturity` clause
+records `:level`. The
+`ecosystem` clause records relations to other projects; milestones live in
+`docs/status/ROADMAP.adoc`.
 
-[source]
+[source,bash]
 ----
-# STATE — Project State Checkpoint
-# Format: a2ml (AI-readable markup)
-
-project: v-graphql
-version: 0.1.0
-last-updated: 2026-02-14
-status: active
-
-phase: implementation
-maturity: beta
-
-ecosystem:
-  part-of: RSR Framework
-  depends-on: []
-
-milestones:
-  - name: Initial setup
-    completion: 100
-  - name: Core implementation
-    completion: 0
+just state-phase      # print phase and maturity from the deed
+just validate-state   # check the deed carries :schema-version and :phase
 ----
 
 == Badge Schema
 
-Generate badges from STATE.a2ml:
+Generate badges:
 
 [source,bash]
 ----
@@ -241,7 +224,6 @@ See `docs/BADGE_SCHEMA.adoc` for the full badge taxonomy.
 
 This template is part of:
 
-* **STATE.a2ml Ecosystem**: Conversation checkpoints
 * **RSR Framework**: Repository standards
 * **Consent-Aware-HTTP**: .well-known compliance
 * **Hypatia**: Neurosymbolic security scanning

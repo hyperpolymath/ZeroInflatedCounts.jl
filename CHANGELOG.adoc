@@ -8,6 +8,32 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 === [Unreleased]
 
+==== Removed
+
+* Every `.a2ml` file. The repo deed (`ZeroInflatedCounts.jl_chora.deed`)
+  is now the single machine-readable record: identity, clade, lineage,
+  status (phase and maturity), meta, ecosystem and agent permissions.
+  Toolchain provisioning is in
+  `.machine_readable/descriptiles/provisioning_praxis.deed`; milestones are
+  in `docs/status/ROADMAP.adoc`.
+* `.machine_readable/contractiles/`, `arrival-pack/`, `coaptation/` and
+  `integrations/`, with the Justfile recipes that drove them (`state-touch`,
+  `claude-md`, `validate-claude-md`, `coapt`, `coapt-reanchor`,
+  `validate-coapt`).
+* `build/just/repo-init.just` and `build/just/groove.just`. Minting is
+  one-shot and this repository is already minted.
+
+==== Changed
+
+* The repo deed assigns clade `dx` (Developer Ecosystem), as for the other
+  Julia libraries in the registry, and records maturity in its own `maturity` clause
+  (`:level`) instead of on the `status` clause.
+* `CLAUDE.md` is hand-maintained and points at the deed, the k9 contracts
+  and the roadmap.
+* `just validate-state`, `just validate-rsr`, `just info`, `just state-phase`,
+  `scripts/validate-template.sh`, the OSSF workflow check and the
+  pre-commit deed hook read the deed instead of `.a2ml` files.
+
 ==== Added
 
 * `www/` site-operations bundle (issue #53): canonical `.well-known/`

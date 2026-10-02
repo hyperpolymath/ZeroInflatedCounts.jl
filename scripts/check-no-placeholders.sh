@@ -4,7 +4,7 @@
 #
 # check-no-placeholders.sh — no repo may ship an unfilled {{PLACEHOLDER}}.
 #
-# Estate rule (methodology.a2ml: reject-if-contains): a token that `just repo-init`
+# Estate rule (reject-if-contains): a template token the minting step
 # did not fill is debt, and in .github/settings.yml or SECURITY.md it is a
 # defect with consequences — probot/settings applies settings.yml on every push,
 # and a security policy that cites a key nobody holds is worse than one that
@@ -21,7 +21,7 @@
 #
 # Scans every text file and allow-lists the few legitimate carriers, rather
 # than checking a list of files someone must remember to extend. The old
-# required-files list omitted .github/settings.yml and ANCHOR.a2ml, which is
+# required-files list omitted .github/settings.yml and the semantic anchor, which is
 # precisely where the leaks were.
 #
 # Matches upper-snake brace tokens only. Justfiles are skipped entirely: an
@@ -127,6 +127,8 @@ ALLOWED=(
     "tests/e2e/template_instantiation_test.sh" # names tokens in its answer list
 )
 
+# Succeed when the repo-relative path may contain template tokens: an
+# entry of ALLOWED, or any justfile (where brace tokens are interpolation).
 is_allowed() {
     local rel="$1"
     for a in "${ALLOWED[@]}"; do
@@ -134,7 +136,7 @@ is_allowed() {
     done
     # just owns brace tokens inside justfiles — an ARGS token there is
     # interpolation, not a placeholder. Justfiles are not only at the root:
-    # the contractiles ship one too.
+    # build/just/ holds them too.
     case "$rel" in
         Justfile|justfile|*/Justfile|*/justfile|*.just) return 0 ;;
     esac

@@ -32,8 +32,8 @@ LICENSE
 LICENSES/                  # REUSE licence texts, dual-licence model (code MPL-2.0 / docs CC-BY-SA-4.0)
 CHANGELOG.adoc             # AsciiDoc is the estate-standard documentation format
 CITATION.cff               # citation metadata; GitHub reads it from the root of the default branch only
-ZeroInflatedCounts.jl_chora.deed # the repo deed: universal AI entry point; family-7 allocation manifest + ply tree folded in (standards#837 pilot). Filename carries the repo slug (deed dispatch <stem>_chora.deed), so repo-init renames it at mint
-CLAUDE.md                  # generated arrival pack; the generator, pre-commit and Claude Code all read it from the ROOT (do not hand-edit; edit the a2ml source)
+ZeroInflatedCounts.jl_chora.deed # the repo deed: universal AI entry point; family-7 allocation manifest + ply tree folded in (standards#837 pilot). Filename carries the repo slug (deed dispatch <stem>_chora.deed)
+CLAUDE.md                  # agent orientation, hand-maintained; Claude Code reads it from the ROOT
 ?GEMINI.md                # pointer to CLAUDE.md for repos without AGENTS.md yet
 Justfile                   # thin; delegates phases to build/just/*.just
 launcher.sh                # --setup/--doctor/--heal/--ai-setup (launcher-standard 0.6.0); the one file a newcomer runs first
@@ -62,7 +62,7 @@ mise.lock                  # makes "latest" concrete: version + per-platform che
 .git/
 .github/                 # community health + workflows (GitHub reads this path and no other) + versioned git hooks (.github/hooks/, wired via core.hooksPath)
 www/                       # site-operations bundle; canonical .well-known/ lives at www/.well-known/ (issue #53)
-.machine_readable/          # manifests, contractiles, policies. Renamed back from machine-readable/ 2026-09-17 by owner ruling, for one canonical spelling estate-wide (census at the 2026-08 divergence: 48 dotted vs 9 hyphenated — the majority was already dotted). See docs/governance/TEMPLATE-LINEAGE-AUDIT.adoc
+.machine_readable/          # deeds, k9 contracts, policies. Renamed back from machine-readable/ 2026-09-17 by owner ruling, for one canonical spelling estate-wide (census at the 2026-08 divergence: 48 dotted vs 9 hyphenated — the majority was already dotted). See docs/governance/TEMPLATE-LINEAGE-AUDIT.adoc
 test/                      # Julia package tests; Pkg.test() runs test/runtests.jl and nowhere else. tests/ holds the estate shell/shape suites
 docs/                      # human documentation
 build/                     # build orchestration: just/ phase modules, container/, docs-seed/, templates/, guix.scm (canon 1.2.1 guix-primary template_ref = "build/")
@@ -73,7 +73,7 @@ src/
 tests/
 
 # ─── Optional: capability-gated or template-only ─────────────────────────────
-?archetypes/               # template-only variation seam (ADR-0003); `just repo-init` removes it from minted repos
+?archetypes/               # template-only variation seam (ADR-0003); the minting step removes it from minted repos
 ?.devcontainer/            # VS Code dev container spec; present only where the container capability is declared
 ?sonar-project.properties  # only where the repo is analysed by SonarCloud
 ?benches/                  # Cargo-conventional at package root
@@ -83,4 +83,4 @@ tests/
 ?CONTRIBUTING.md           # accepted at root OR .github/; .github/ is the canonical estate location
 ?CONTRIBUTING.adoc          # estate docs gate (standards scripts/check-docs-presence.sh) requires CONTRIBUTING at the ROOT; this is the copy it verifies
 ?SECURITY.md               # accepted at root OR .github/; likewise
-?REQUIRES_INITIALISATION.md  # written by the minting process, removed once `just repo-init` runs
+?REQUIRES_INITIALISATION.md  # written by the minting process, removed once minting completes

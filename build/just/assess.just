@@ -101,18 +101,6 @@ self-assess:
         echo "    ⚠ Consequence: no C-compatible FFI bridge."
     fi
 
-    if $HAS_API && [ -f ".machine_readable/integrations/groove.a2ml" ]; then
-        PORT=$(grep '(port ' .machine_readable/integrations/groove.a2ml 2>/dev/null | sed 's/.*(port \([0-9]*\)).*/\1/')
-        if [ "$PORT" = "0" ]; then
-            echo "  ⚠ groove.a2ml — Port not assigned. Run 'just groove-setup'."
-        else
-            echo "  ✓ groove.a2ml — KEEP (Groove discovery on port $PORT)"
-        fi
-    elif $HAS_API; then
-        echo "  ✗ groove.a2ml — MISSING. Your project has an API but no Groove manifest."
-        echo "    → Run 'just groove-setup' to enable snap-on/snap-off discovery."
-    fi
-
     if $HAS_CONTAINER && [ -d "build/container" ]; then
         echo "  ✓ build/container/ — KEEP (Containerfile + compose)"
     elif ! $HAS_CONTAINER && [ -d "build/container" ]; then
@@ -151,11 +139,6 @@ self-assess:
     echo "── KEEP FOR FUTURE (not active, but valuable later) ──────"
     echo ""
 
-    if [ -d ".machine_readable/contractiles" ]; then
-        echo "  ◆ contractiles/ — Must/Trust/Dust/Lust contracts."
-        echo "    Not enforced until you configure them, but ready when you need"
-        echo "    automated compliance checking. Zero cost to keep."
-    fi
 
     if [ -d ".machine_readable/bot_directives" ]; then
         echo "  ◆ bot_directives/ — Gitbot fleet configuration."
@@ -248,9 +231,7 @@ verify:
     check_file "LICENSE"
     check_community_file "CONTRIBUTING"
     check_either "README.adoc" "README.md"
-    check_file ".machine_readable/descriptiles/STATE.a2ml"
-    check_file ".machine_readable/descriptiles/META.a2ml"
-    check_file ".machine_readable/descriptiles/ECOSYSTEM.a2ml"
+    if ls *_chora.deed >/dev/null 2>&1; then echo "  PASS: repo deed (*_chora.deed)"; else echo "  FAIL: repo deed (*_chora.deed) missing"; ERRORS=$((ERRORS + 1)); fi
     check_either "CHANGELOG.md" "CHANGELOG.adoc"
 
     # Check at least 1 workflow exists
