@@ -64,8 +64,7 @@ Or with OPSM, the odds-and-sods package manager (see <<opsm>>):
 `opsm install https://github.com/hyperpolymath/ZeroInflatedCounts.jl.git --registry git`
 
 TIP: To start a *new* project from this template, use GitHub's *Use this template*
-button (or clone as above), then run `just repo-init` before step 3; it fills every
-placeholder token. The steps below work the same afterwards.
+button (or clone as above). The steps below work the same afterwards.
 
 == 3. Install the toolchain
 

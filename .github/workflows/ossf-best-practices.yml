@@ -64,18 +64,20 @@ jobs:
             exit 1
           fi
           echo "README: OK"
-      - name: Check .machine_readable directory and STATE.a2ml
+      - name: Check .machine_readable directory and repo deed
         run: |
           if [ ! -d ".machine_readable" ]; then
             echo "::error::.machine_readable/ directory is required"
             exit 1
           fi
 
-          if [ ! -f ".machine_readable/descriptiles/STATE.a2ml" ]; then
-            echo "::error::.machine_readable/descriptiles/STATE.a2ml is required"
+          shopt -s nullglob
+          deeds=(*_chora.deed)
+          if [ "${#deeds[@]}" -ne 1 ]; then
+            echo "::error::exactly one repo deed (*_chora.deed) is required at the root; found ${#deeds[@]}"
             exit 1
           fi
-          echo ".machine_readable/descriptiles/STATE.a2ml: OK"
+          echo "${deeds[0]}: OK"
       - name: Check CHANGELOG exists
         run: |
           if [ ! -f "CHANGELOG.md" ] && [ ! -f "CHANGELOG.adoc" ] && [ ! -f "CHANGES.md" ]; then
@@ -87,7 +89,7 @@ jobs:
         # Delegates to the same script tests/e2e/template_instantiation_test.sh
         # runs, so the gate and the test can never disagree about the rule.
         # This step used to check a hand-maintained list of required files that
-        # omitted .github/settings.yml and ANCHOR.a2ml — the two places the
+        # omitted .github/settings.yml and the semantic anchor record — the two places the
         # leaks actually were. The script scans everything and allow-lists the
         # legitimate carriers instead.
         run: bash scripts/check-no-placeholders.sh .

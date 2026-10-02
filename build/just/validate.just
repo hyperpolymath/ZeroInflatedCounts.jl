@@ -18,11 +18,8 @@ validate-rsr:
         [ -f "$f" ] || MISSING="$MISSING $f"
     done
     # The repo deed's filename carries the repo slug (<stem>_chora.deed), so
-    # this is a glob; the folded replacement of the old 0-AI-MANIFEST.a2ml.
+    # this is a glob. It is the single machine-readable record of the repo.
     ls *_chora.deed >/dev/null 2>&1 || MISSING="$MISSING repo-deed (*_chora.deed)"
-    for f in .machine_readable/descriptiles/STATE.a2ml .machine_readable/descriptiles/META.a2ml .machine_readable/descriptiles/ECOSYSTEM.a2ml .machine_readable/descriptiles/anchors/ANCHOR.a2ml .machine_readable/policies/MAINTENANCE-AXES.a2ml .machine_readable/policies/MAINTENANCE-CHECKLIST.a2ml .machine_readable/policies/SOFTWARE-DEVELOPMENT-APPROACH.a2ml; do
-        [ -f "$f" ] || MISSING="$MISSING $f"
-    done
     for f in docs/legal/EXHIBIT-A-ETHICAL-USE.txt docs/legal/EXHIBIT-B-QUANTUM-SAFE.txt LICENSES/MPL-2.0.txt; do
         [ -f "$f" ] || MISSING="$MISSING $f"
     done
@@ -32,22 +29,22 @@ validate-rsr:
     for f in src/interface/ffi src/interface/generated; do
         [ -d "$f" ] || MISSING="$MISSING $f"
     done
-    for f in docs/governance/MAINTENANCE-CHECKLIST.adoc docs/governance/SOFTWARE-DEVELOPMENT-APPROACH.adoc; do
+    CHECKLIST=docs/governance/MAINTENANCE-CHECKLIST.adoc
+    APPROACH=docs/governance/SOFTWARE-DEVELOPMENT-APPROACH.adoc
+    for f in "$CHECKLIST" "$APPROACH"; do
         [ -f "$f" ] || MISSING="$MISSING $f"
     done
-    if [ -f ".machine_readable/descriptiles/META.a2ml" ]; then
-        grep -q 'axis-1 = "must > intend > like"' .machine_readable/descriptiles/META.a2ml || MISSING="$MISSING META.a2ml:axis-1"
-        grep -q 'axis-2 = "corrective > adaptive > perfective"' .machine_readable/descriptiles/META.a2ml || MISSING="$MISSING META.a2ml:axis-2"
-        grep -q 'axis-3 = "systems > compliance > effects"' .machine_readable/descriptiles/META.a2ml || MISSING="$MISSING META.a2ml:axis-3"
-        grep -q 'scoping-first = true' .machine_readable/descriptiles/META.a2ml || MISSING="$MISSING META.a2ml:scoping-first"
-        grep -q 'idris-unsound-scan = "believe_me/assert_total"' .machine_readable/descriptiles/META.a2ml || MISSING="$MISSING META.a2ml:idris-unsound-scan"
-        grep -q 'audit-focus = "systems in place, documentation explains actual state, safety/security accounted for, observed effects reviewed"' .machine_readable/descriptiles/META.a2ml || MISSING="$MISSING META.a2ml:audit-focus"
-        grep -q 'compliance-focus = "seams/compromises/exception register, bounded exceptions, anti-drift checks"' .machine_readable/descriptiles/META.a2ml || MISSING="$MISSING META.a2ml:compliance-focus"
-        grep -q 'effects-evidence = "benchmark execution/results and maintainer status dialogue/review"' .machine_readable/descriptiles/META.a2ml || MISSING="$MISSING META.a2ml:effects-evidence"
-        grep -q 'compliance-tooling = "panic-attack"' .machine_readable/policies/MAINTENANCE-AXES.a2ml || MISSING="$MISSING MAINTENANCE-AXES.a2ml:compliance-tooling"
-        grep -q 'effects-tooling = "ecological checking with sustainabot guidance"' .machine_readable/policies/MAINTENANCE-AXES.a2ml || MISSING="$MISSING MAINTENANCE-AXES.a2ml:effects-tooling"
-        grep -q 'source-human = "docs/governance/MAINTENANCE-CHECKLIST.adoc"' .machine_readable/policies/MAINTENANCE-CHECKLIST.a2ml || MISSING="$MISSING MAINTENANCE-CHECKLIST.a2ml:source-human"
-        grep -q 'source-human = "docs/governance/SOFTWARE-DEVELOPMENT-APPROACH.adoc"' .machine_readable/policies/SOFTWARE-DEVELOPMENT-APPROACH.a2ml || MISSING="$MISSING SOFTWARE-DEVELOPMENT-APPROACH.a2ml:source-human"
+    # The three maintenance axes are stated in the governance documents.
+    if [ -f "$CHECKLIST" ]; then
+        grep -q 'must > intend > like' "$CHECKLIST" || MISSING="$MISSING MAINTENANCE-CHECKLIST:axis-1"
+        grep -q 'corrective > adaptive > perfective' "$CHECKLIST" || MISSING="$MISSING MAINTENANCE-CHECKLIST:axis-2"
+        grep -q 'systems > compliance > effects' "$CHECKLIST" || MISSING="$MISSING MAINTENANCE-CHECKLIST:axis-3"
+        grep -q 'Axis 1 Scoping Pass' "$CHECKLIST" || MISSING="$MISSING MAINTENANCE-CHECKLIST:scoping-first"
+        grep -q 'panic-attack' "$CHECKLIST" || MISSING="$MISSING MAINTENANCE-CHECKLIST:compliance-tooling"
+    fi
+    if [ -f "$APPROACH" ]; then
+        grep -q 'believe_me' "$APPROACH" || MISSING="$MISSING SOFTWARE-DEVELOPMENT-APPROACH:idris-unsound-scan"
+        grep -q 'sustainabot' "$APPROACH" || MISSING="$MISSING SOFTWARE-DEVELOPMENT-APPROACH:effects-tooling"
     fi
     if [ -n "$MISSING" ]; then
         echo "MISSING:$MISSING"
@@ -55,15 +52,13 @@ validate-rsr:
     fi
     echo "RSR compliance: PASS"
 
-# Validate STATE.a2ml syntax
+# Check the repo deed carries a schema version and a status phase
 validate-state:
-    @cd "{{justfile_directory()}}" && if [ -f ".machine_readable/descriptiles/STATE.a2ml" ]; then \
-        grep -q '^\[metadata\]' .machine_readable/descriptiles/STATE.a2ml && \
-        grep -q 'project\s*=' .machine_readable/descriptiles/STATE.a2ml && \
-        echo "STATE.a2ml: valid" || echo "STATE.a2ml: INVALID (missing required sections)"; \
-    else \
-        echo "No .machine_readable/descriptiles/STATE.a2ml found"; \
-    fi
+    @cd "{{justfile_directory()}}" && f=$(ls *_chora.deed 2>/dev/null | head -1); \
+        if [ -z "$f" ]; then echo "FAIL: no repo deed (*_chora.deed)" >&2; exit 1; fi; \
+        grep -q ':schema-version "' "$f" && grep -qE '^ *:phase [a-z]' "$f" \
+        && echo "$f: schema-version and phase present" \
+        || { echo "FAIL: $f lacks :schema-version or a status :phase" >&2; exit 1; }
 
 # Validate AI installation guide completeness (finishbot pre-release check)
 validate-ai-install:
@@ -149,3 +144,43 @@ validate-ai-install:
 # Full validation suite
 validate: validate-rsr validate-state validate-ai-install
     @echo "All validations passed!"
+
+# Check for template placeholders that haven't been replaced
+verify-template:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Checking for unreplaced template placeholders..."
+    FOUND=0
+
+    # Check for double-brace placeholder patterns
+    HITS=$(grep -rn '{{'{{'}}[A-Z_]*{{'}}'}}' --include="*.adoc" --include="*.md" --include="*.deed" \
+           --include="*.scm" --include="*.toml" --include="*.yml" --include="*.yaml" \
+           . 2>/dev/null | grep -v 'node_modules\|\.git/' | grep -v 'PLACEHOLDERS.adoc' || true)
+    if [ -n "$HITS" ]; then
+        echo ""
+        echo "⚠ Unreplaced placeholders found:"
+        echo "$HITS" | head -20
+        FOUND=1
+    fi
+
+    # Check for template defaults still present
+    if grep -q 'ZeroInflatedCounts.jl' Justfile 2>/dev/null; then
+        echo "⚠ Justfile still references 'ZeroInflatedCounts.jl' — update project name"
+        FOUND=1
+    fi
+
+    # Check the repo deed and the praxis deed for unreplaced placeholders
+    for f in *_chora.deed .machine_readable/descriptiles/*_praxis.deed; do
+        if [ -f "$f" ] && grep -q '{{'{{'}}' "$f" 2>/dev/null; then
+            echo "⚠ $f still has template placeholders"
+            FOUND=1
+        fi
+    done
+
+    if [ $FOUND -eq 0 ]; then
+        echo "✓ No template placeholders found — project is properly customised."
+    else
+        echo ""
+        echo "Replace the placeholders by hand."
+        exit 1
+    fi

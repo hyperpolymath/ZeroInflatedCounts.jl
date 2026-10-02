@@ -18,7 +18,6 @@ Get up and running in 60 seconds.
 git clone https://github.com/hyperpolymath/ZeroInflatedCounts.jl my-project
 cd my-project
 rm -rf .git && git init -b main
-just repo-init       # interactive placeholder replacement
 ----
 
 == Project Structure

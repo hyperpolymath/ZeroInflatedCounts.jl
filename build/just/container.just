@@ -263,9 +263,7 @@ container-keep +tiers:
         rm -f .github/workflows/container-build.yml
         rm -f build/just/container.just
         [ -f Justfile ] && sed -i '/# >>> container-module/,/# <<< container-module/d' Justfile
-        for jf in Justfile .machine_readable/contractiles/Justfile; do
-            [ -f "$jf" ] && sed -i '\|import? "build/just/container.just"|d' "$jf"
-        done
+        [ -f Justfile ] && sed -i '\|import? "build/just/container.just"|d' Justfile
     fi
 
     echo ""

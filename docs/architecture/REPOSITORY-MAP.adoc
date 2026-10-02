@@ -71,7 +71,7 @@ predecessors did.
 
 | `.machine_readable/`
 | yes
-| manifests, contractiles, policies. Renamed back from machine-readable/ 2026-09-17 by owner ruling, for one canonical spelling estate-wide (census at the 2026-08 divergence: 48 dotted vs 9 hyphenated — the majority was already dotted). See docs/governance/TEMPLATE-LINEAGE-AUDIT.adoc
+| deeds, k9 contracts, policies. Renamed back from machine-readable/ 2026-09-17 by owner ruling, for one canonical spelling estate-wide (census at the 2026-08 divergence: 48 dotted vs 9 hyphenated — the majority was already dotted). See docs/governance/TEMPLATE-LINEAGE-AUDIT.adoc
 
 | `.mailmap`
 | yes
@@ -91,7 +91,7 @@ predecessors did.
 
 | `CLAUDE.md`
 | yes
-| generated arrival pack; the generator, pre-commit and Claude Code all read it from the ROOT (do not hand-edit; edit the a2ml source)
+| agent orientation, hand-maintained; Claude Code reads it from the ROOT
 
 | `CONTRIBUTING.adoc`
 | optional
@@ -123,7 +123,7 @@ predecessors did.
 
 | `ZeroInflatedCounts.jl_chora.deed`
 | yes
-| the repo deed: universal AI entry point; family-7 allocation manifest + ply tree folded in (standards#837 pilot). Filename carries the repo slug (deed dispatch <stem>_chora.deed), so repo-init renames it at mint
+| the repo deed: universal AI entry point; family-7 allocation manifest + ply tree folded in (standards#837 pilot). Filename carries the repo slug (deed dispatch <stem>_chora.deed)
 
 | `benches/`
 | optional
@@ -209,6 +209,9 @@ your own repo - but do not read their emptiness as neglect here.
 
 [cols="1"]
 |===
+| `.machine_readable/ai/`
+| `.machine_readable/bot_directives/`
+| `.machine_readable/descriptiles/anchors/`
 | `.machine_readable/scripts/verification/`
 | `docs/governance/audit/`
 | `docs/governance/audit/compliance/`

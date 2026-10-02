@@ -14,9 +14,11 @@ https://github.com/hyperpolymath/MetaManifold-WebUI/issues/18[MetaManifold-WebUI
 *The consumer* is https://github.com/JoshuaJewell/MetaManifold-WebUI[MetaManifold-WebUI]. A
 negative-binomial GLM for differential abundance, requested in
 https://github.com/hyperpolymath/MetaManifold-WebUI/issues/102[hyperpolymath/MetaManifold-WebUI#102],
-is merged on the `hyperpolymath/MetaManifold-WebUI` fork (PR #103) and not yet upstream:
-`Differential.fit_nb` and `Differential.differential_abundance` in
-`src/analysis/differential.jl`. This document calls that method *the NB GLM*.
+is proposed upstream in
+https://github.com/JoshuaJewell/MetaManifold-WebUI/pull/24[JoshuaJewell/MetaManifold-WebUI#24]
+(open, not merged, as of 2026-10-02): `src/analysis/differential.jl`, the
+`POST /api/v1/studies/{study}/analysis/differential` route and a `differential` section in
+`config/defaults/pipeline.yml`. This document calls that method *the NB GLM*.
 
 - The data contract, offsets and multiple-testing rule of the NB GLM carry over unchanged.
 - MetaManifold-WebUI receives only a thin adapter: a route, a panel, configuration keys and a

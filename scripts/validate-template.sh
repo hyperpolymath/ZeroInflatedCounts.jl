@@ -57,9 +57,8 @@ check_file_exists() {
 
 # The repo deed's FILENAME carries the repository name (filename dispatch:
 # <stem>_chora.deed, stem = repo slug — deed.abnf v1.0.0), so the check is a
-# glob, not a literal. Pre-deed era this slot was 0-AI-MANIFEST.a2ml; the
-# family-7 allocation manifest and the ply tree folded into the deed
-# (standards#837 pilot).
+# glob, not a literal. The family-7 allocation manifest and the ply tree
+# folded into the deed (standards#837 pilot).
 check_deed_exists() {
     local description="${1:-}"
     local f
@@ -187,11 +186,7 @@ echo ""
 log_info "Phase 2: Machine-readable metadata (.machine_readable/)"
 echo ""
 
-check_file_exists ".machine_readable/descriptiles/STATE.a2ml" "Project state"
-check_file_exists ".machine_readable/descriptiles/META.a2ml" "Architecture decisions"
-check_file_exists ".machine_readable/descriptiles/ECOSYSTEM.a2ml" "Ecosystem position"
-check_file_exists ".machine_readable/descriptiles/anchors/ANCHOR.a2ml" "Semantic boundary anchor"
-check_file_exists ".machine_readable/policies/MAINTENANCE-AXES.a2ml" "Maintenance axes"
+check_file_exists ".machine_readable/descriptiles/provisioning_praxis.deed" "Provisioning praxis deed"
 
 #==============================================================================
 # VALIDATION PHASE 3: REQUIRED WORKFLOWS (17 minimum)
@@ -320,7 +315,7 @@ if [ "$(basename "$REPO_ROOT")" = "ZeroInflatedCounts.jl" ]; then
     log_pass "Skipping placeholder check for template repo"
 else
     # Check that key files don't have unresolved placeholders
-    for file in "$REPO_ROOT/README.adoc" "$REPO_ROOT/Justfile" "$REPO_ROOT/.machine_readable/descriptiles/STATE.a2ml"; do
+    for file in "$REPO_ROOT/README.adoc" "$REPO_ROOT/Justfile" "$REPO_ROOT"/*_chora.deed; do
         if [ -f "$file" ]; then
             if has_placeholder "$file"; then
                 log_warning "File contains unresolved placeholders: $(basename "$file")"

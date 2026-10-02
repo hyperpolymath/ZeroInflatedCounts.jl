@@ -13,7 +13,7 @@
   :canonical-name "ZeroInflatedCounts.jl-provisioning"
   :repo         "hyperpolymath/ZeroInflatedCounts.jl"
   :archetype    "library"            ; app | library | tool | theory | docs
-  :languages    "idris2 zig"           ; detected; informational
+  :languages    "julia"                ; detected; informational
   ;; Contract-verb overrides ("" = per-language default, which `just langs` shows)
   :build        ""
   :test         ""

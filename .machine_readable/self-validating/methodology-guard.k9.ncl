@@ -4,7 +4,7 @@ K9!
 #
 # K9 Validator: Methodology Guard
 # Checks that agent work respects methodology constraints declared in
-# bot_directives/methodology.a2ml.
+# the repo deed (ZeroInflatedCounts.jl_chora.deed).
 #
 # Usage: k9 validate methodology-guard
 
@@ -52,28 +52,6 @@ let methodology_guard = {
       default_ceiling = 0,
     },
 
-    state_not_template = {
-      description = "STATE.a2ml must not contain template placeholders",
-      severity = "warning",
-      file = ".machine_readable/descriptiles/STATE.a2ml",
-      # NOTE: the PROJECT token below is written as a Nickel concat
-      # ("{{" ++ "PROJECT}}") ON PURPOSE. `just repo-init` runs a sed substitution for
-      # the brace-PROJECT-brace token over EVERY text file, which would otherwise
-      # rewrite this guard's own pattern into the consumer's name and break the
-      # check. Splitting the literal across "++" keeps the contiguous token text
-      # out of the file (in this comment too) so init cannot match it, while
-      # Nickel still evaluates the element back to the full token. Do not
-      # "simplify" it to a plain string. (The PLACEHOLDER token and
-      # "ZeroInflatedCounts.jl" are not init tokens, so they survive as-is.)
-      reject_patterns = ["{{PLACEHOLDER}}", "{{" ++ "PROJECT}}", "ZeroInflatedCounts.jl"],
-    },
-
-    coverage_updated = {
-      description = "coverage.a2ml should be updated within 30 days",
-      severity = "info",
-      file = ".machine_readable/bot_directives/coverage.a2ml",
-      staleness_days = 30,
-    },
   },
 }
 in methodology_guard

@@ -9,9 +9,9 @@
 # All original code: MPL-2.0 (SPDX header required on every file).
 # Copyright: Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
 
-# STATE FILES
-# .deed metadata files go in .machine_readable/ ONLY.
-# Never create STATE.a2ml, META.a2ml, ECOSYSTEM.a2ml, AGENTIC.a2ml, NEUROSYM.a2ml, or PLAYBOOK.a2ml.
+# STATE
+# The repo deed (*_chora.deed at the root) is the single machine-readable record.
+# Never add another state file; other .deed and .k9.ncl files live in .machine_readable/ only.
 
 # BANNED PATTERNS
 # Idris2: believe_me, assert_total, assert_smaller, unsafePerformIO

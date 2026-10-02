@@ -1,23 +1,38 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-= YOUR Template Repo Roadmap
+= ZeroInflatedCounts.jl Roadmap
 
-== Current Status
+== Current status
 
-Initial development phase.
+Version 0.1.0. Phase *incubating*, maturity *experimental* (both recorded on the
+`status` clause of `ZeroInflatedCounts.jl_chora.deed`).
+
+Only the method-conditions specification exists
+(`docs/method-conditions/zero-inflation-and-hurdle.adoc`). Nothing is
+implemented, tested against R, or proved yet.
 
 == Milestones
 
-=== v0.1.0 - Foundation
-* [ ] Core functionality
-* [ ] Basic documentation
-* [ ] CI/CD pipeline
+[cols="3,1",options="header"]
+|===
+| Milestone | Done
 
-=== v1.0.0 - Stable Release
-* [ ] Full feature set
-* [ ] Comprehensive tests
-* [ ] Production ready
+| Method-conditions specification for hurdle NB and ZINB | yes
+| `hurdle_nb` and `zinb` via R `pscl`, with a Julia likelihood oracle in tests | no
+| Known-answer tests against `pscl`, simulation recovery, negative controls | no
+| Agda proofs: hurdle separability, truncation normaliser, ZINB zero probability | no
+| Thin adapter PR into MetaManifold-WebUI (route, panel, config keys, dependency pinned by commit) | no
+|===
 
-== Future Directions
+== Next actions
 
-_To be determined based on community feedback._
+. The owner approves the method-catalogue amendment that admits NB, hurdle NB
+  and ZINB for sequencing data.
+. Implement `hurdle_nb` and `zinb` against the conditions document.
+
+== Not planned here
+
+* Single-visit occupancy: not identifiable. A replicate-only (K ≥ 2) design is
+  planned separately.
+* A production Julia reimplementation of `pscl`: the Julia likelihood is a test
+  oracle only.

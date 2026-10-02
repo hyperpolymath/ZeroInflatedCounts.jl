@@ -1,3 +1,9 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 = policies Registry
+
+`.maintenance-perms-ignore`:: Paths the maintenance permission audit skips.
+
+The maintenance axes, checklist and execution order are
+`docs/governance/MAINTENANCE-CHECKLIST.adoc` and
+`docs/governance/SOFTWARE-DEVELOPMENT-APPROACH.adoc`.

@@ -2,7 +2,7 @@
 # Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
 # Authoritative source: docs/practice/AI-CONVENTIONS.adoc
 
-# STARTUP: Read the repo deed (*_chora.deed at the repo root) first, then .machine_readable/descriptiles/STATE.a2ml.
+# STARTUP: Read the repo deed (*_chora.deed at the repo root) first, then docs/status/ROADMAP.adoc.
 
 # LICENSE
 # All original code: MPL-2.0.
@@ -10,10 +10,9 @@
 # SPDX header required on every source file.
 # Copyright: Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
 
-# STATE FILES (.machine_readable/ ONLY)
-# Never create in repo root: STATE.deed, META.deed, ECOSYSTEM.deed,
-# AGENTIC.deed, NEUROSYM.deed, PLAYBOOK.deed.
-# The .machine_readable/ directory is the single source of truth.
+# STATE
+# The repo deed (*_chora.deed at the root) is the single machine-readable record.
+# Never add another state file; other .deed and .k9.ncl files live in .machine_readable/ only.
 
 # BANNED PATTERNS
 # Idris2: believe_me, assert_total, assert_smaller, unsafePerformIO

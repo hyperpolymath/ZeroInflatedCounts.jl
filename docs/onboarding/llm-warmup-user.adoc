@@ -33,14 +33,7 @@ Prerequisites are git, a C toolchain and mise; everything else is installed by
 A person uses it to start a new repository:
 
 . On GitHub, *Use this template* (or clone it).
-. In the new checkout, run `just repo-init`. It asks for the project name, owner,
-  author and licence contact (listed in `.machine_readable/ai/PLACEHOLDERS.adoc`),
-  replaces every placeholder token, then validates the result. `just repo-init
-  julia-library` applies the one archetype overlay shipped in `archetypes/`.
 . Run `just validate` (structure + metadata) and `just doctor` (toolchain).
-
-An AI running `repo-init` must pipe answers to stdin and must never set
-`RSR_NON_INTERACTIVE=1`: that stubs `read`, and the substitution loops then never end.
 
 == When something is wrong
 
@@ -51,5 +44,5 @@ fixes. Do not guess an installer that the repository does not document.
 == What it touches
 
 Nothing leaves the machine. `mise install` and `just setup` install tools per-user
-under the mise data directory; `just repo-init` rewrites files only inside the
-checkout. No remote repository is created and nothing is pushed until you do it.
+under the mise data directory. No remote repository is created and nothing is
+pushed until you do it.

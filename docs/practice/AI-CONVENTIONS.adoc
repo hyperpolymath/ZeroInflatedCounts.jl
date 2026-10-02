@@ -12,12 +12,11 @@ Per-tool config files (.cursorrules, .clinerules, etc.) reference this document.
 === Session Startup
 
 1. Read the repo deed (`*_chora.deed` at root) FIRST (mandatory gatekeeper).
-2. Read `.machine_readable/descriptiles/STATE.a2ml` for current status and blockers.
-3. Read `.machine_readable/descriptiles/anchors/ANCHOR.a2ml` for canonical authority boundaries.
-4. Read `.machine_readable/policies/MAINTENANCE-AXES.a2ml` for maintenance/audit sequencing.
-5. Read `.machine_readable/policies/MAINTENANCE-CHECKLIST.a2ml` for baseline controls.
-6. Read `.machine_readable/policies/SOFTWARE-DEVELOPMENT-APPROACH.a2ml` for execution order.
-7. Read `.machine_readable/descriptiles/AGENTIC.a2ml` for agent constraints.
+2. Read the `status` clause of the deed and `docs/status/ROADMAP.adoc` for current status and next actions.
+3. Read the `ecosystem` clause of the deed for IS / IS-NOT boundaries and relations.
+4. Read the `agentic` clause of the deed for agent permissions and constraints.
+5. Read `docs/governance/MAINTENANCE-CHECKLIST.adoc` for baseline controls.
+6. Read `docs/governance/SOFTWARE-DEVELOPMENT-APPROACH.adoc` for maintenance axes and execution order.
 
 === License
 
@@ -44,10 +43,9 @@ Per estate policy (hyperpolymath/standards `LICENCE-POLICY.adoc` Rule 1 + Addend
 
 === State Files
 
-State/metadata files, anchors, and policies (.a2ml) belong in `.machine_readable/` ONLY.
-NEVER create STATE.a2ml, META.a2ml, ECOSYSTEM.a2ml, AGENTIC.a2ml,
-NEUROSYM.a2ml, PLAYBOOK.a2ml, ANCHOR.a2ml, MAINTENANCE-AXES.a2ml,
-MAINTENANCE-CHECKLIST.a2ml, or SOFTWARE-DEVELOPMENT-APPROACH.a2ml in the repository root.
+The repo deed (`*_chora.deed` at the root) is the single machine-readable record.
+Never add another state file at the root. Other `.deed` files and the k9
+contracts (`.k9.ncl`) live in `.machine_readable/` only.
 
 === Banned Patterns
 
@@ -94,9 +92,8 @@ Use `just` (Justfile) for all build, test, lint, and format tasks.
 === References
 
 - `*_chora.deed` (repo deed) -- universal AI entry point
-- `.machine_readable/descriptiles/AGENTIC.a2ml` -- agent permissions and constraints
-- `.machine_readable/descriptiles/STATE.a2ml` -- current project state
-- `.machine_readable/descriptiles/anchors/ANCHOR.a2ml` -- canonical authority and policy boundary
-- `.machine_readable/policies/MAINTENANCE-AXES.a2ml` -- canonical axis sequencing and audit requirements
-- `.machine_readable/policies/MAINTENANCE-CHECKLIST.a2ml` -- baseline maintenance checklist policy
-- `.machine_readable/policies/SOFTWARE-DEVELOPMENT-APPROACH.a2ml` -- axis execution approach policy
+- `.machine_readable/descriptiles/provisioning_praxis.deed` -- toolchain provisioning
+- `.machine_readable/self-validating/*.k9.ncl` -- k9 validation contracts
+- `docs/status/ROADMAP.adoc` -- milestones and next actions
+- `docs/governance/MAINTENANCE-CHECKLIST.adoc` -- baseline maintenance checklist
+- `docs/governance/SOFTWARE-DEVELOPMENT-APPROACH.adoc` -- maintenance axes and execution order
