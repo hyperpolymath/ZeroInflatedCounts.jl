@@ -37,18 +37,16 @@
     (work :agent VIBE :task "UI/frontend, PanLL panels,  components, theming, rapid prototyping")
     )
   ; Identity, clade, forges, lineage, status: mapping clade-to-repo-deed.
-  ; The clade is not yet chosen. UNASSIGNED is deliberate: the registry gate
-  ; must fail on it (mapping P-5) until the owner assigns one.
   (identity
     :primary-forge github
     :owner "hyperpolymath"
-    :prefixed-name "UNASSIGNED-ZeroInflatedCounts.jl")
+    :prefixed-name "ap-ZeroInflatedCounts.jl")
   (clade
-    :primary UNASSIGNED
-    :primary-name ""
+    :primary ap
+    :primary-name "Applications"
     :secondary ()
     :assigned "2026-10-02"
-    :rationale "")
+    :rationale "Same clade as its one consumer, MetaManifold-WebUI (owner decision 2026-10-02).")
   (forges
     :github "hyperpolymath/ZeroInflatedCounts.jl"
     :gitlab ""
@@ -59,13 +57,10 @@
     :born "2026-10-02"
     :previous-names ()
     :instantiated-from "rsr-template-repo")
-  ; :maturity follows state-v1-decision option B (phase and maturity live on
-  ; the status clause; milestones live in docs/status/ROADMAP.adoc).
   (status
     :phase incubating
     :since "2026-10-02"
     :present #t
-    :maturity experimental
     :aliases ()
     :merged-into ""
     :superseded-by ""
@@ -73,6 +68,11 @@
     :ended ""
     (history
       (entry :phase incubating :since "2026-10-02" :note "Created from rsr-template-repo@33f7c43ac700170249cd9d7ad998593ab00f4265 (archetype julia-library) by repo-init; clade not yet chosen; not yet registered. Only the method-conditions specification exists.")))
+  ; Maturity has its own clause (owner decision 2026-10-02); milestones live in
+  ; docs/status/ROADMAP.adoc.
+  (maturity
+    :level experimental
+    :since "2026-10-02")
   ; Meta and ecosystem: mapping meta-ecosystem-to-repo-deed.
   (meta
     :version "0.1.0"

@@ -180,6 +180,6 @@ signal in the repo deed:
   `ZeroInflatedCounts.jl/docs/governance/CRG-AUDIT-TEMPLATE.adoc`).
 * `docs/practice/DOGFOOD-LOG.adoc` — dated dogfood evidence (required for C).
 * `ZeroInflatedCounts.jl_chora.deed` — the repo deed, authoritative state
-  (phase and maturity in its `status` clause).
+  (phase in its `status` clause, maturity in its `maturity` clause).
 
 _Run `just crg-badge` to generate the shields.io badge for your README._

@@ -198,7 +198,8 @@ hand-written tree that used to sit here it cannot go stale.
 == Project State
 
 The `status` clause of the repo deed, `ZeroInflatedCounts.jl_chora.deed`,
-tracks project state: `:phase`, `:maturity` and a dated `history`. The
+tracks project state: `:phase` and a dated `history`; its `maturity` clause
+records `:level`. The
 `ecosystem` clause records relations to other projects; milestones live in
 `docs/status/ROADMAP.adoc`.
 

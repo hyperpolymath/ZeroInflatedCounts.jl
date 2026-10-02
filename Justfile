@@ -367,9 +367,10 @@ import? "build/just/validate.just"
 # STATE MANAGEMENT
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Show the lifecycle phase and maturity from the repo deed status clause
+# Show the lifecycle phase (status clause) and maturity (maturity clause) from the repo deed
 state-phase:
-    @grep -oE "^ *:(phase|maturity) [^ )]+" *_chora.deed | head -2 | sed "s/^ *://"
+    @grep -m1 -oE "^ *:phase [^ )]+" *_chora.deed | sed "s/^ *://"
+    @grep -A1 -E "^ *\(maturity$" *_chora.deed | grep -oE ":level [^ )]+" | sed "s/^:level/maturity/"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # GUIX

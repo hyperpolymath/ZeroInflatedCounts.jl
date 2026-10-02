@@ -18,7 +18,7 @@ Read, in this order, before running anything:
 
 . `*_chora.deed` (the repo deed) — the universal AI entry point at the repository root.
 . `CLAUDE.md` — hand-maintained agent guidance (estate doctrine + repo identity).
-. The `status` clause of the repo deed — current phase and maturity
+. The `status` and `maturity` clauses of the repo deed — current phase and maturity
   (`just state-phase`); milestones are in `docs/status/ROADMAP.adoc`.
 
 Do not infer the repository's purpose from its name. If a fact is not written

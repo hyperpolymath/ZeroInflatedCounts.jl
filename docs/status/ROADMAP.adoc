@@ -4,8 +4,8 @@
 
 == Current status
 
-Version 0.1.0. Phase *incubating*, maturity *experimental* (both recorded on the
-`status` clause of `ZeroInflatedCounts.jl_chora.deed`).
+Version 0.1.0. Phase *incubating* and maturity *experimental*, recorded in the
+`status` and `maturity` clauses of `ZeroInflatedCounts.jl_chora.deed`.
 
 Only the method-conditions specification exists
 (`docs/method-conditions/zero-inflation-and-hurdle.adoc`). Nothing is

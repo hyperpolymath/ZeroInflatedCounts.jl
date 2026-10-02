@@ -28,7 +28,7 @@ If you are unsure what something is, **read the canon; do not guess** (guessing 
 
 | File | Answers |
 |---|---|
-| `ZeroInflatedCounts.jl_chora.deed` | The repo deed — the single machine-readable record: identity, clade, lineage, status (phase, maturity), meta, ecosystem (IS / IS-NOT, chain, relations), and agent permissions. Grammar: `hyperpolymath/standards` `1-formats/deed/spec/abnf/deed.abnf`. |
+| `ZeroInflatedCounts.jl_chora.deed` | The repo deed — the single machine-readable record: identity, clade, lineage, status (phase), maturity, meta, ecosystem (IS / IS-NOT, chain, relations), and agent permissions. Grammar: `hyperpolymath/standards` `1-formats/deed/spec/abnf/deed.abnf`. |
 | `.machine_readable/descriptiles/provisioning_praxis.deed` | How the toolchain is provisioned (`just setup`, `just doctor`). |
 | `.machine_readable/self-validating/*.k9.ncl` | k9 validation contracts. Kennel (data) / Yard (pure eval) / Hunt (guarded exec). |
 | `docs/status/ROADMAP.adoc` | Milestones, what is done, next actions. |
@@ -49,7 +49,7 @@ JavaScript tooling: **Bun**, in plain JavaScript.
 - **IS** — Hurdle and zero-inflated negative binomial models for sequencing count data: R `pscl` in production, a Julia likelihood oracle in tests, and Agda proofs of the model identities.
 - **IS-NOT** — an implementation yet (only the method-conditions specification exists) · a replacement for MetaManifold-WebUI's NB GLM differential abundance (that stays the method of record; these are alternative fits shown beside it) · an occupancy model (single-visit occupancy is not identifiable; a replicate-only design is planned separately) · a Julia reimplementation of `pscl` for production use (the Julia likelihood is a test oracle only).
 - **Where it sits** — a library; consumed by MetaManifold-WebUI through a thin adapter (route, panel, keys in the `differential` section of `config/defaults/pipeline.yml`, dependency pinned by commit).
-- **Clade** — UNASSIGNED until the owner chooses one.
+- **Clade** — `ap` (Applications), the same clade as its consumer MetaManifold-WebUI.
 - **Constraints here** — fail-closed; evidence per step; no silent skip; rerun after a fix; a release claim requires a hard pass. Never: banned languages (above), secrets, state files in the repo root, AGPL.
 - **Golden path** — `just test && just quality`.
 - **State** — phase incubating; maturity experimental. See `docs/status/ROADMAP.adoc`.
