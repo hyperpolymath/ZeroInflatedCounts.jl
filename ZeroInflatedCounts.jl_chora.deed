@@ -9,6 +9,8 @@
   :schema-version "1.0.0"
   :canonical-name "ZeroInflatedCounts.jl"
   :beholding-chora #u5"estate/chora"
+  ; The seed is the birth locator, kept when the repo moved to metadatastician
+  ; (owner decision 2026-10-02) so the uuid stays stable across forge moves.
   :repo-uuid #u5"github.com/hyperpolymath/ZeroInflatedCounts.jl"
   ; The canon pin: which release of hyperpolymath/standards canon.lock this
   ; repo implements.
@@ -39,7 +41,7 @@
   ; Identity, clade, forges, lineage, status: mapping clade-to-repo-deed.
   (identity
     :primary-forge github
-    :owner "hyperpolymath"
+    :owner "metadatastician"
     :prefixed-name "dx-ZeroInflatedCounts.jl")
   (clade
     :primary dx
@@ -48,7 +50,7 @@
     :assigned "2026-10-02"
     :rationale "A Julia library, filed like the other Julia packages in the registry (owner decision 2026-10-02).")
   (forges
-    :github "hyperpolymath/ZeroInflatedCounts.jl"
+    :github "metadatastician/ZeroInflatedCounts.jl"
     :gitlab ""
     :bitbucket "")
   (lineage
