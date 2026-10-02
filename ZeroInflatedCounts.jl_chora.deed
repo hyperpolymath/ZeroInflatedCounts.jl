@@ -40,13 +40,13 @@
   (identity
     :primary-forge github
     :owner "hyperpolymath"
-    :prefixed-name "ap-ZeroInflatedCounts.jl")
+    :prefixed-name "dx-ZeroInflatedCounts.jl")
   (clade
-    :primary ap
-    :primary-name "Applications"
+    :primary dx
+    :primary-name "Developer Ecosystem"
     :secondary ()
     :assigned "2026-10-02"
-    :rationale "Same clade as its one consumer, MetaManifold-WebUI (owner decision 2026-10-02).")
+    :rationale "A Julia library, filed like the other Julia packages in the registry (owner decision 2026-10-02).")
   (forges
     :github "hyperpolymath/ZeroInflatedCounts.jl"
     :gitlab ""

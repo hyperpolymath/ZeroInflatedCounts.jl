@@ -25,8 +25,8 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Changed
 
-* The repo deed assigns clade `ap` (Applications), the clade of its consumer
-  MetaManifold-WebUI, and records maturity in its own `maturity` clause
+* The repo deed assigns clade `dx` (Developer Ecosystem), as for the other
+  Julia libraries in the registry, and records maturity in its own `maturity` clause
   (`:level`) instead of on the `status` clause.
 * `CLAUDE.md` is hand-maintained and points at the deed, the k9 contracts
   and the roadmap.

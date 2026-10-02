@@ -49,7 +49,7 @@ JavaScript tooling: **Bun**, in plain JavaScript.
 - **IS** — Hurdle and zero-inflated negative binomial models for sequencing count data: R `pscl` in production, a Julia likelihood oracle in tests, and Agda proofs of the model identities.
 - **IS-NOT** — an implementation yet (only the method-conditions specification exists) · a replacement for MetaManifold-WebUI's NB GLM differential abundance (that stays the method of record; these are alternative fits shown beside it) · an occupancy model (single-visit occupancy is not identifiable; a replicate-only design is planned separately) · a Julia reimplementation of `pscl` for production use (the Julia likelihood is a test oracle only).
 - **Where it sits** — a library; consumed by MetaManifold-WebUI through a thin adapter (route, panel, keys in the `differential` section of `config/defaults/pipeline.yml`, dependency pinned by commit).
-- **Clade** — `ap` (Applications), the same clade as its consumer MetaManifold-WebUI.
+- **Clade** — `dx` (Developer Ecosystem), like the other Julia libraries in the registry.
 - **Constraints here** — fail-closed; evidence per step; no silent skip; rerun after a fix; a release claim requires a hard pass. Never: banned languages (above), secrets, state files in the repo root, AGPL.
 - **Golden path** — `just test && just quality`.
 - **State** — phase incubating; maturity experimental. See `docs/status/ROADMAP.adoc`.
